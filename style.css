@@ -1,0 +1,46 @@
+* {
+    box-sizing: border-box;
+}
+
+main{
+    font-family: 'Karla';
+}
+.start-page{
+    background: #F5F7FB;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.title{
+    font-weight: 700;
+    font-size: 50px;
+    line-height: 37px;
+    text-align: center;
+
+    color: #293264;
+}
+
+.instructions{
+    font-family: 'Inter';
+    font-weight: 400;
+    font-size: 30px;
+    text-align: center;
+    color: #293264;
+}
+
+button{
+    width: 193px;
+    height: 52px;
+    border: none;
+    background: #4D5B9E;
+    border-radius: 15px;
+    font-family: 'Inter';
+    font-weight: 500;
+    font-size: 30px;
+    text-align: center;
+    color: #F5F7FB;
+}
+
