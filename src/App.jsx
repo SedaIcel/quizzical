@@ -12,9 +12,7 @@ export default function App(){
         setGame(true)
     }
     return(
-        <main>
-
-            
+        <main>            
             {game ? <Quiz/> : <Start startGame={startGame}/>}
         </main>
 
