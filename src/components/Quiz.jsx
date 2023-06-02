@@ -30,19 +30,20 @@ export default function Quiz(){
             ...item,
             triviaAnswers : shuffleArray(insertRandomly(item.incorrect_answers,item.correct_answer))
         }
-    })    
+    })        
 
     const newElements = newData.map(item => {
         return (
-             <div>
-                <h1>{item.question}</h1>
-                <p>{item.triviaAnswers}</p>
+             <div className ="container">
+                <h1 className ="container-questions">{item.question}</h1>
+                <button className = "container-answers">{item.triviaAnswers}</button>
+                <hr/>
             </div>          
             )
     });
 
     return(
-        <div>
+        <div className ="quiz">
             {newElements}
         </div>
        

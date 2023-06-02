@@ -1,46 +1,80 @@
 * {
     box-sizing: border-box;
+    margin: 0;
 }
 
 main{
     font-family: 'Karla';
+    background: #F5F7FB;
+    
 }
 .start-page{
-    background: #F5F7FB;
+    
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100%;
+    
 }
 
 .title{
-    font-weight: 700;
     font-size: 50px;
     line-height: 37px;
-    text-align: center;
-
+    text-align: center;     
     color: #293264;
 }
 
 .instructions{
     font-family: 'Inter';
-    font-weight: 400;
     font-size: 30px;
     text-align: center;
     color: #293264;
+    margin-bottom: 30px
 }
 
 button{
-    width: 193px;
-    height: 52px;
+    width: 250px;
+    height: 60px;
     border: none;
     background: #4D5B9E;
     border-radius: 15px;
-    font-family: 'Inter';
-    font-weight: 500;
     font-size: 30px;
-    text-align: center;
     color: #F5F7FB;
+}
+
+.quiz{    
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0px 75px;
+    gap: 25px;
+    
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;   
+    gap: 15px; 
+}
+
+
+.container-questions{
+    font-weight: 700;
+    font-size: 25px;
+    color: #293264;   
+    
+}
+
+.container-answers{
+    box-sizing: border-box;
+    width: 65.92px;
+    height: 20.65px;    
+    border: 0.794239px solid #4D5B9E;
+    border-radius: 7.94239px;
+    
+    
 }
 
