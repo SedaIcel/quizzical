@@ -24,27 +24,40 @@ export default function Quiz(){
             .then(res => res.json())
             .then(data => setTriviaData(data.results))
     },[])
-
+           
     const newData = triviaData.map((item)=> {
         return {
             ...item,
             triviaAnswers : shuffleArray(insertRandomly(item.incorrect_answers,item.correct_answer))
         }
-    })        
+    })   
+    const answers = newData.map (item => {
+        const question = item.question
+        return item.triviaAnswers.map(answer => {
+            return (<div>
 
-    const newElements = newData.map(item => {
+                    <h1>{question}</h1>
+                    <button>{answer}</button>
+                    </div>
+                    )          })
+    })
+
+    const triviaQuestion = newData.map(item => {
         return (
-             <div className ="container">
-                <h1 className ="container-questions">{item.question}</h1>
-                <button className = "container-answers">{item.triviaAnswers}</button>
+            
+            <div>
+                <h1 className ="container-questions">{item.question}</h1>     
+                          {answers}
+
                 <hr/>
-            </div>          
+            </div>              
+                      
             )
-    });
+    })
 
     return(
         <div className ="quiz">
-            {newElements}
+            {answers}
         </div>
        
     )
