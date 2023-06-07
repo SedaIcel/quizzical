@@ -31,29 +31,19 @@ export default function Quiz(){
             triviaAnswers : shuffleArray(insertRandomly(item.incorrect_answers,item.correct_answer))
         }
     })   
-    const answers = newData.map (item => {
-        const question = item.question
-        return item.triviaAnswers.map(answer => {
-            return (<div>
-
-                    <h1>{question}</h1>
-                    <button>{answer}</button>
-                    </div>
-                    )          })
-    })
-
-    const triviaQuestion = newData.map(item => {
+    console.log(newData)
+    const answers = newData.map (({question, triviaAnswers}) => {        
         return (
-            
             <div>
-                <h1 className ="container-questions">{item.question}</h1>     
-                          {answers}
-
-                <hr/>
-            </div>              
-                      
+                <h1>{question}</h1>
+                <div>
+                     {triviaAnswers.map(answer => <button>{answer}</button>)}
+                </div>                    
+            </div>
             )
-    })
+        })
+
+
 
     return(
         <div className ="quiz">
