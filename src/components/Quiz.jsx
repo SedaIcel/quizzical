@@ -43,7 +43,7 @@ export default function Quiz(){
                      <>
                         
                         <input
-                        name="options"
+                        name={question}
                         type="radio" 
                         className="radio-input"
                         id={answer}
