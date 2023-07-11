@@ -1,9 +1,15 @@
 import React from "react"
+import {nanoid} from "nanoid"
 
 
 export default function Quiz(){
     const [triviaData, setTriviaData] = React.useState([])
+    const [selectedData, setSelectedData] = React.useState([])
+    const [isSelected, setIsSelected] = React.useState(false)
+
     
+
+
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -28,26 +34,62 @@ export default function Quiz(){
     const newData = triviaData.map((item)=> {
         return {
             ...item,
+            id: nanoid(),
             triviaAnswers : shuffleArray(insertRandomly(item.incorrect_answers,item.correct_answer))
         }
-    })   
+    }) 
 
-    console.log(newData)
+    //console.log(newData)
+
+
+    function handleClick(event) {
+        setSelectedData(newData.map(item => {
+            return item.question === event.target.name ?
+            {
+                ...item,
+                selectedAnswer : event.target.value
+            } :
+            {
+                ...item,            
+                selectedAnswer : ""
+            }
+        }))        
+    }
+
+    console.log(selectedData)
+  
+    const result = selectedData.filter(item => item.correct_answer === item.selectedAnswer).length
+    
+    // function checkAnswers() {
+    //     const 
+    //    selectedData.map(item => {
+    //     if(item.selectedAnswer) {
+
+    //     }
+    //    })
+    // }
+
+    
+     
+    
 
     const triviaSet = newData.map (({question, triviaAnswers}) => {        
         return (
-            <>
+            <>                
                 <h1 className = "container-questions">{question}</h1>
-                <div className = "container-button">
-                     {triviaAnswers.map(answer => 
-                     <>
-                        
-                        <input
+                <div className = "container-button"
+                                        
+                    >
+                     {triviaAnswers.map(answer =>                      
+                     <>                        
+                        <input                         
                         name={question}
                         type="radio" 
                         className="radio-input"
                         id={answer}
                         value={answer}
+                        onChange={handleClick}                        
+                        
                         >
                         </input> 
                         <label htmlFor={answer} className="radio-label">{answer}</label>                    
@@ -66,11 +108,19 @@ export default function Quiz(){
     return(
         <div className ="quiz">
             {triviaSet}
-            <button 
-                className="check-answers"
-            >
-                Check Answers
-            </button>
+            <div>
+                
+                <p className="quiz-results">You scored {result}/5 correct answers</p>
+                
+                <button 
+                    className="check-answers"
+                    onClick={()=> checkAnswers}
+                >
+                    Check Answers
+                </button>
+
+            </div>
+
         </div>
        
     )
