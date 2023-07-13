@@ -5,26 +5,36 @@ import classNames from "classnames";
 export default function Quiz() {
   const result = 0;
   const [triviaQuestions, setTriviaQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const rawtriviaData = "https://opentdb.com/api.php?amount=5&type=multiple";
   const fetchData = async () => {
     try {
       const data = await fetch(rawtriviaData);
       const triviaData = await data.json();
-      const formattedTriviaData = triviaData.results.map((data) => {
-        const formattedOptions = [
-          ...data.incorrect_answers,
-          data.correct_answer,
-        ].map((option) => ({ option, optionID: nanoid(), isSelected: false }));
+      const { status } = data;
 
-        return {
-          question: data.question,
-          correct: data.correct_answer,
-          options: formattedOptions,
-        };
-      });
+      if (status === 200) {
+        setLoading(false);
+        const formattedTriviaData = triviaData.results.map((data) => {
+          const formattedOptions = [
+            ...data.incorrect_answers,
+            data.correct_answer,
+          ].map((option) => ({
+            option,
+            optionID: nanoid(),
+            isSelected: false,
+          }));
 
-      setTriviaQuestions(formattedTriviaData);
+          return {
+            question: data.question,
+            correct: data.correct_answer,
+            options: formattedOptions,
+          };
+        });
+
+        setTriviaQuestions(formattedTriviaData);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -57,30 +67,36 @@ export default function Quiz() {
 
   return (
     <div className="quiz">
-      {triviaQuestions.map((trivia) => (
-        <div key={nanoid()}>
-          <h1 className="container-questions">{trivia?.question}</h1>
-          <div className="question-options-container">
-            {trivia.options.map(({ option, optionID, isSelected }) => (
-              <button
-                key={nanoid()}
-                onClick={() => handleOptionClick(optionID)}
-                className={classNames("QtnOption", {
-                  selectedOption: isSelected,
-                })}
-              >
-                {option}
-              </button>
-            ))}
+      {loading ? (
+        <p className="loading-state">Loading...</p>
+      ) : (
+        <>
+          {triviaQuestions.map((trivia) => (
+            <div key={nanoid()} className="question-container">
+              <h1 className="container-questions">{trivia?.question}</h1>
+              <div className="question-options-container">
+                {trivia.options.map(({ option, optionID, isSelected }) => (
+                  <button
+                    key={nanoid()}
+                    onClick={() => handleOptionClick(optionID)}
+                    className={classNames("QtnOption", {
+                      selectedOption: isSelected,
+                    })}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div>
+            <div className="results-container">
+              <p className="results">You scored {result}/5 correct answers</p>
+              <button className="check-answers">Check Answers</button>
+            </div>
           </div>
-        </div>
-      ))}
-      <div>
-        <div className="results-container">
-          <p className="results">You scored {result}/5 correct answers</p>
-          <button className="check-answers">Check Answers</button>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 }

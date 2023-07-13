@@ -17,6 +17,12 @@ button {
   border: none;
   color: #f5f7fb;
   background: #4d5b9e;
+  cursor: pointer;
+}
+
+.loading-state {
+  font-size: 30px;
+  text-align: center;
 }
 
 .start-page {
@@ -51,11 +57,10 @@ button {
   gap: 25px;
 }
 
-.container {
+.question-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 15px;
 }
 
 .container-questions {
