@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
+import classNames from "classnames";
 
 export default function Quiz() {
-  const result = "00";
+  const result = 0;
   const [triviaQuestions, setTriviaQuestions] = useState([]);
 
   const rawtriviaData = "https://opentdb.com/api.php?amount=5&type=multiple";
@@ -29,45 +30,57 @@ export default function Quiz() {
     }
   };
 
-  const handleOptionClick = (optionId) => {
-    setTriviaQuestions();
-    console.log(optionId);
-  };
-
   useEffect(() => {
     fetchData();
   }, []);
 
+  const handleOptionClick = (optionId) => {
+    setTriviaQuestions((prevQuestions) =>
+      prevQuestions.map((trivia) =>
+        trivia.options.some((option) => option.optionID === optionId)
+          ? {
+              ...trivia,
+              options: trivia.options.map((option) => {
+                if (option.isSelected) {
+                  return { ...option, isSelected: false };
+                }
+
+                return option.optionID === optionId
+                  ? { ...option, isSelected: !option.isSelected }
+                  : option;
+              }),
+            }
+          : trivia
+      )
+    );
+  };
+
   return (
-    <>
-      <div className="quiz">
-        {triviaQuestions.map((trivia) => {
-          const { question, options } = trivia;
-          return (
-            <div key={nanoid()}>
-              <h1 className="container-questions">{question}</h1>
-              <div className="question-options-container">
-                {options.map(({ option, optionID }) => (
-                  <button
-                    key={nanoid()}
-                    className="QtnOption"
-                    onClick={() => handleOptionClick(optionID)}
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-        <hr />
-        <div>
-          <p className="quiz-results">You scored {result}/5 correct answers</p>
-          <button className="check-answers" onClick={() => checkAnswers}>
-            Check Answers
-          </button>
+    <div className="quiz">
+      {triviaQuestions.map((trivia) => (
+        <div key={nanoid()}>
+          <h1 className="container-questions">{trivia?.question}</h1>
+          <div className="question-options-container">
+            {trivia.options.map(({ option, optionID, isSelected }) => (
+              <button
+                key={nanoid()}
+                onClick={() => handleOptionClick(optionID)}
+                className={classNames("QtnOption", {
+                  selectedOption: isSelected,
+                })}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+      <div>
+        <div className="results-container">
+          <p className="results">You scored {result}/5 correct answers</p>
+          <button className="check-answers">Check Answers</button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
