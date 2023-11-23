@@ -4,8 +4,8 @@ import { nanoid } from "nanoid";
 export default function Quiz() {
   const [triviaData, setTriviaData] = useState([]);
   const [checkAnswers, setCheckAnswers] = useState(false);
+  const [resetGame, setResetGame] = useState(0);
 
-  // const [startGame, setStartGame] = useState(0);
   // const [showAnswers, setShowAnswers] = useState(false);
 
   // function resetGame() {
@@ -66,8 +66,7 @@ export default function Quiz() {
         })
       )
       .catch((error) => console.log(error));
-  }, []);
-
+  }, [resetGame]);
   function holdOption(id) {
     setTriviaData((oldData) =>
       oldData.map((data) => {
@@ -82,59 +81,77 @@ export default function Quiz() {
   }
   console.log(triviaData);
 
+  let result = 0;
+  if (checkAnswers) {
+    triviaData.map(({ options }) => {
+      return options.forEach((option) => {
+        option.isHeld && option.isCorrect ? result++ : result;
+      });
+    });
+  }
+
   const newEl = triviaData.map(({ id, question, options }) => {
     return (
       <div key={id}>
         <h1 className="container-questions">{question}</h1>
         <div className="container-button">
-          {options.map(({ id, value }) => (
-            <>
-              <input
-                type="radio"
-                id={id}
-                name={question}
-                className="radio-label"
-                onClick={() => holdOption(id)}
-              />
-              <label htmlFor={id}>{value}</label>
-            </>
-          ))}
+          {options.map(({ id, value, isCorrect, isHeld }) => {
+            let styles = { backgroundColor: isHeld ? "#D6DBF5" : "#F5F7FB" };
+            if (checkAnswers) {
+              if (isHeld && isCorrect) {
+                styles = { backgroundColor: "#94D7A2" };
+              } else if (isHeld && isCorrect === false) {
+                styles = { backgroundColor: "#F8BCBC" };
+              } else if (isCorrect) {
+                styles = { backgroundColor: "#94D7A2" };
+              }
+            }
+            console.log(styles);
+            return (
+              <>
+                <input
+                  type="radio"
+                  id={id}
+                  name={question}
+                  className="radio-label"
+                  onClick={() => holdOption(id)}
+                  style={styles}
+                />
+                <label htmlFor={id}>{value}</label>
+              </>
+            );
+          })}
         </div>
         <hr />
       </div>
     );
   });
 
-  let result = 0;
-  if (checkAnswers) {
-    triviaData.map(({ options }) => {
-      return options.forEach((option) =>
-        option.isHeld && option.isCorrect ? result++ : result
-      );
-    });
-  }
-
-  function controlAnswers() {
+  function handleClick() {
     setCheckAnswers(true);
+  }
+  function reset() {
+    setResetGame((prev) => prev + 1);
+    setCheckAnswers(false);
   }
 
   return (
     <div className="quiz">
       {newEl}
-      {!checkAnswers ? (
-        <div>
-          <button onClick={controlAnswers} className="quiz-check-button">
+      <div>
+        {checkAnswers ? (
+          <div>
+            <p>{`You scored ${result}/5 correct answers`}</p>
+            <button className="quiz-check-button" onClick={reset}>
+              Play again
+            </button>
+          </div>
+        ) : (
+          <button onClick={handleClick} className="quiz-check-button">
             Check answers
           </button>
-        </div>
-      ) : (
-        <div>
-          <p>{`You scored ${result}/5 correct answers`}</p>
-          <button className="quiz-check-button" onClick={null}>
-            Play again
-          </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
