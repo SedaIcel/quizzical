@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-// import { nanoid } from "nanoid";
+import { nanoid } from "nanoid";
 
 export default function Quiz() {
   const [triviaData, setTriviaData] = useState([]);
@@ -26,37 +26,46 @@ export default function Quiz() {
   }, []);
 
   function organizeData(data) {
-    const newData = data.map((item, index) => {
+    const newData = data.map((item) => {
+      const incorrectAnswers = item.incorrect_answers.map((answer) => {
+        return {
+          id: nanoid(),
+          value: answer,
+          isCorrect: false,
+        };
+      });
+      const correctAnswer = {
+        id: nanoid(),
+        value: item.correct_answer,
+        isCorrect: true,
+      };
+      const allAnswers = shuffleArray(
+        insertRandomly(incorrectAnswers, correctAnswer)
+      );
       return {
-        key: index,
-        id: index,
+        id: nanoid(),
         question: item.question,
-        allAnswers: shuffleArray(
-          insertRandomly(item.incorrect_answers, item.correct_answer)
-        ),
-        correctAnswer: item.correct_answer,
+        options: allAnswers,
       };
     });
     return newData;
   }
 
-  const newEl = triviaData.map(({ question, allAnswers }) => {
-    console.log(question);
-    console.log(allAnswers);
-
+  const newEl = triviaData.map(({ id, question, options }) => {
     return triviaData ? (
-      <div key={question}>
+      <div key={id}>
         <h1 className="container-questions">{question}</h1>
         <div className="container-button">
-          {allAnswers.map((answer) => (
+          {options.map(({ id, value }) => (
             <>
               <input
                 type="radio"
-                id={answer}
+                id={id}
                 name={question}
                 className="radio-label"
+                onClick={null}
               />
-              <label htmlFor={answer}>{answer}</label>
+              <label htmlFor={id}>{value}</label>
             </>
           ))}
         </div>
