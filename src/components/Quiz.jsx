@@ -8,6 +8,8 @@ export default function Quiz() {
   const [triviaData, setTriviaData] = useState([]);
   const [checkAnswers, setCheckAnswers] = useState(false);
   const [resetGame, setResetGame] = useState(0);
+  const [isDisableButton, setIsDisableButton] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -23,19 +25,16 @@ export default function Quiz() {
     newArray.splice(index, 0, element);
     return newArray;
   }
-
-  useEffect(() => {
-    let url = "https://opentdb.com/api.php?amount=5&type=multiple";
-    fetch(url)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error("Something went wrong");
-      })
-      .then((data) =>
+  const rawtriviaData = "https://opentdb.com/api.php?amount=5&type=multiple";
+  const fetchData = async () => {
+    try {
+      const data = await fetch(rawtriviaData);
+      const allData = await data.json();
+      const { status } = data;
+      if (status === 200) {
+        setLoading(false);
         setTriviaData(() => {
-          return data.results.map((item) => {
+          return allData.results.map((item) => {
             const incorrectAnswers = item.incorrect_answers.map((answer) => {
               return {
                 id: nanoid(),
@@ -59,20 +58,32 @@ export default function Quiz() {
               options: allAnswers,
             };
           });
-        })
-      )
-      .catch((error) => console.log(error));
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, [resetGame]);
 
-  function holdOption(id) {
+  function holdOption(id, dataId) {
     setTriviaData((oldData) =>
       oldData.map((data) => {
-        return {
-          ...data,
-          options: data.options.map((option) =>
-            option.id === id ? { ...option, isHeld: !option.isHeld } : option
-          ),
-        };
+        if (data.id === dataId) {
+          return {
+            ...data,
+            options: data.options.map((option) =>
+              option.id === id
+                ? { ...option, isHeld: !option.isHeld }
+                : { ...option, isHeld: false }
+            ),
+          };
+        } else {
+          return data;
+        }
       })
     );
   }
@@ -91,42 +102,57 @@ export default function Quiz() {
     return (
       <QuizData
         key={id}
+        questionId={id}
         question={question}
         options={options}
         isCheckAnswers={checkAnswers}
         handleClick={holdOption}
+        disabledItem={disable}
+        isDisable={isDisableButton}
       />
     );
   });
 
+  function disable(item) {
+    document.getElementById(item).disabled = true;
+  }
+
   function handleClick() {
     setCheckAnswers(true);
+    setIsDisableButton(true);
   }
   function reset() {
     setResetGame((prev) => prev + 1);
     setCheckAnswers(false);
+    setIsDisableButton(false);
   }
 
   console.log(result);
   return (
     <div className="quiz">
-      {checkAnswers && result === 5 && <Confetti />}
-      <div className="quiz-questions">{newEl}</div>
+      {loading ? (
+        <p className="loading-state">Loading...</p>
+      ) : (
+        <>
+          {checkAnswers && result === 5 && <Confetti />}
+          <div className="quiz-questions">{newEl}</div>
 
-      <div className="quiz-result-button">
-        {checkAnswers ? (
-          <>
-            <p className="quiz-result-description">{`You scored ${result}/5 correct answers`}</p>
-            <button className="check-button" onClick={reset}>
-              Play again
-            </button>
-          </>
-        ) : (
-          <button onClick={handleClick} className="check-button">
-            Check answers
-          </button>
-        )}
-      </div>
+          <div className="quiz-result-button">
+            {checkAnswers ? (
+              <>
+                <p className="quiz-result-description">{`You scored ${result}/5 correct answers`}</p>
+                <button className="check-button" onClick={reset}>
+                  Play again
+                </button>
+              </>
+            ) : (
+              <button onClick={handleClick} className="check-button">
+                Check answers
+              </button>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
