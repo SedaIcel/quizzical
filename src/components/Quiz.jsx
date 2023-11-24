@@ -1,17 +1,13 @@
 import { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
+import QuizData from "./QuizData";
+import Confetti from "react-confetti";
+import he from "he";
 
 export default function Quiz() {
   const [triviaData, setTriviaData] = useState([]);
   const [checkAnswers, setCheckAnswers] = useState(false);
   const [resetGame, setResetGame] = useState(0);
-
-  // const [showAnswers, setShowAnswers] = useState(false);
-
-  // function resetGame() {
-  //   setStartGame((prev) => prev + 1);
-  //   setShowAnswers(false);
-  // }
 
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -43,14 +39,14 @@ export default function Quiz() {
             const incorrectAnswers = item.incorrect_answers.map((answer) => {
               return {
                 id: nanoid(),
-                value: answer,
+                value: he.decode(answer),
                 isCorrect: false,
                 isHeld: false,
               };
             });
             const correctAnswer = {
               id: nanoid(),
-              value: item.correct_answer,
+              value: he.decode(item.correct_answer),
               isCorrect: true,
               isHeld: false,
             };
@@ -59,7 +55,7 @@ export default function Quiz() {
             );
             return {
               id: nanoid(),
-              question: item.question,
+              question: he.decode(item.question),
               options: allAnswers,
             };
           });
@@ -67,6 +63,7 @@ export default function Quiz() {
       )
       .catch((error) => console.log(error));
   }, [resetGame]);
+
   function holdOption(id) {
     setTriviaData((oldData) =>
       oldData.map((data) => {
@@ -92,38 +89,13 @@ export default function Quiz() {
 
   const newEl = triviaData.map(({ id, question, options }) => {
     return (
-      <div key={id}>
-        <h1 className="container-questions">{question}</h1>
-        <div className="container-button">
-          {options.map(({ id, value, isCorrect, isHeld }) => {
-            let styles = { backgroundColor: isHeld ? "#D6DBF5" : "#F5F7FB" };
-            if (checkAnswers) {
-              if (isHeld && isCorrect) {
-                styles = { backgroundColor: "#94D7A2" };
-              } else if (isHeld && isCorrect === false) {
-                styles = { backgroundColor: "#F8BCBC" };
-              } else if (isCorrect) {
-                styles = { backgroundColor: "#94D7A2" };
-              }
-            }
-            console.log(styles);
-            return (
-              <>
-                <input
-                  type="radio"
-                  id={id}
-                  name={question}
-                  className="radio-label"
-                  onClick={() => holdOption(id)}
-                  style={styles}
-                />
-                <label htmlFor={id}>{value}</label>
-              </>
-            );
-          })}
-        </div>
-        <hr />
-      </div>
+      <QuizData
+        key={id}
+        question={question}
+        options={options}
+        isCheckAnswers={checkAnswers}
+        handleClick={holdOption}
+      />
     );
   });
 
@@ -135,19 +107,22 @@ export default function Quiz() {
     setCheckAnswers(false);
   }
 
+  console.log(result);
   return (
     <div className="quiz">
-      {newEl}
-      <div>
+      {checkAnswers && result === 5 && <Confetti />}
+      <div className="quiz-questions">{newEl}</div>
+
+      <div className="quiz-result-button">
         {checkAnswers ? (
-          <div>
-            <p>{`You scored ${result}/5 correct answers`}</p>
-            <button className="quiz-check-button" onClick={reset}>
+          <>
+            <p className="quiz-result-description">{`You scored ${result}/5 correct answers`}</p>
+            <button className="check-button" onClick={reset}>
               Play again
             </button>
-          </div>
+          </>
         ) : (
-          <button onClick={handleClick} className="quiz-check-button">
+          <button onClick={handleClick} className="check-button">
             Check answers
           </button>
         )}
