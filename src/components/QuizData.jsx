@@ -10,7 +10,7 @@ export default function QuizData({
   questionId,
 }) {
   const allButtons = options.map(({ id, value, isCorrect, isHeld }) => {
-    var labelStyles = { backgroundColor: "" };
+    let labelStyles = { backgroundColor: "" };
     if (isCheckAnswers) {
       if (isHeld && isCorrect) {
         labelStyles = { backgroundColor: "#94D7A2" };

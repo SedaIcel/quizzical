@@ -118,6 +118,7 @@
   margin: 1rem 0px;
   display: flex;
   gap: 1.5rem;
+  align-items: center;
 }
 
 .radio-input {

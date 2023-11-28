@@ -25,47 +25,49 @@ export default function Quiz() {
     newArray.splice(index, 0, element);
     return newArray;
   }
-  const rawtriviaData = "https://opentdb.com/api.php?amount=5&type=multiple";
-  const fetchData = async () => {
-    try {
-      const data = await fetch(rawtriviaData);
-      const allData = await data.json();
-      const { status } = data;
-      if (status === 200) {
-        setLoading(false);
-        setTriviaData(() => {
-          return allData.results.map((item) => {
-            const incorrectAnswers = item.incorrect_answers.map((answer) => {
-              return {
-                id: nanoid(),
-                value: he.decode(answer),
-                isCorrect: false,
-                isHeld: false,
-              };
-            });
-            const correctAnswer = {
-              id: nanoid(),
-              value: he.decode(item.correct_answer),
-              isCorrect: true,
-              isHeld: false,
-            };
-            const allAnswers = shuffleArray(
-              insertRandomly(incorrectAnswers, correctAnswer)
-            );
-            return {
-              id: nanoid(),
-              question: he.decode(item.question),
-              options: allAnswers,
-            };
-          });
-        });
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const rawtriviaDataUrl = "https://opentdb.com/api.php?amount=5&type=multiple";
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetch(rawtriviaDataUrl);
+        const allData = await data.json();
+        const { status } = data;
+
+        if (status === 200) {
+          setLoading(false);
+          setTriviaData(() => {
+            return allData.results.map((item) => {
+              const incorrectAnswers = item.incorrect_answers.map((answer) => {
+                return {
+                  id: nanoid(),
+                  value: he.decode(answer),
+                  isCorrect: false,
+                  isHeld: false,
+                };
+              });
+              const correctAnswer = {
+                id: nanoid(),
+                value: he.decode(item.correct_answer),
+                isCorrect: true,
+                isHeld: false,
+              };
+              const allAnswers = shuffleArray(
+                insertRandomly(incorrectAnswers, correctAnswer)
+              );
+              return {
+                id: nanoid(),
+                question: he.decode(item.question),
+                options: allAnswers,
+              };
+            });
+          });
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     fetchData();
   }, [resetGame]);
 
@@ -127,7 +129,6 @@ export default function Quiz() {
     setIsDisableButton(false);
   }
 
-  console.log(result);
   return (
     <div className="quiz">
       {loading ? (
