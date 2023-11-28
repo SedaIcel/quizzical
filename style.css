@@ -68,6 +68,12 @@
   color: var(--secondary-text-color);
 }
 
+.loading-state {
+  font-size: 30px;
+  text-align: center;
+  margin: auto;
+}
+
 .quiz {
   height: 100%;
   display: flex;
@@ -112,6 +118,7 @@
   margin: 1rem 0px;
   display: flex;
   gap: 1.5rem;
+  align-items: center;
 }
 
 .radio-input {
@@ -123,7 +130,6 @@
 .radio-label {
   display: flex;
   align-items: center;
-  background: none;
   padding: 5px 20px;
   font-family: sans-serif, Arial;
   font-size: 1rem;
@@ -135,23 +141,9 @@
   text-align: center;
 }
 
-.container-answers input[type="radio"]:checked + label {
-  background-color: #d6dbf5;
-}
-
 .check-answers {
   margin: 0 auto;
   font-size: 20px;
-}
-
-@media screen and (max-width: 992px) {
-  .title {
-    font-size: 2rem;
-  }
-  .instructions,
-  .start-game {
-    font-size: 1.2rem;
-  }
 }
 
 @media screen and (max-width: 992px) {
